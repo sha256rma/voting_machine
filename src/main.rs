@@ -2,15 +2,20 @@ extern crate csv;
 
 use std::error::Error;
 use std::process;
+use std::fs::File;
+use csv::Reader;
 
 struct Candidate {
     name: String,
     political_party: String,
+    votes: u32, // New field to count votes
 }
 
 struct Voter {
+    user_id: String, // Unique identifier for the voter
     name: String,
     date_of_birth: String,
+    has_voted: bool,
 }
 
 struct Office {
@@ -48,6 +53,7 @@ impl ElectionBallot {
             let candidate = Candidate {
                 name,
                 political_party: party,
+                votes: 0, // Initialize votes to 0
             };
             office.candidates.push(candidate);
         } else {
@@ -55,10 +61,13 @@ impl ElectionBallot {
         }
     }
 
-    fn register_voter(&mut self, name: String, date_of_birth: String) {
+    // update register_voter
+    fn register_voter(&mut self, user_id: String, name: String, date_of_birth: String) {
         let voter = Voter {
+            user_id,
             name,
             date_of_birth,
+            has_voted: false,
         };
         self.registered_voters.push(voter);
     }
@@ -91,21 +100,45 @@ impl ElectionBallot {
         voter_writer.write_record(&[
             "Ballot ID",
             "Election Name",
+            "User ID",
             "Voter Name",
             "Date of Birth",
+            "Has Voted",
         ])?;
         for voter in &self.registered_voters {
             voter_writer.write_record(&[
                 &self.ballot_id.to_string(),
                 &self.election_name,
+                &voter.user_id,
                 &voter.name,
                 &voter.date_of_birth,
+                &voter.has_voted.to_string(),
             ])?;
         }
         voter_writer.flush()?;
 
         Ok(())
     }
+
+    // Method to check if a voter is registered
+  fn is_voter_registered(&self, user_id: &str) -> Result<(bool, Option<String>), Box<dyn Error>> {
+          let file = File::open("registered_voters.csv")?;
+          let mut rdr = Reader::from_reader(file);
+
+          for result in rdr.records() {
+              let record = result?;
+              // Adjust indices according to your CSV structure
+              let current_user_id = &record[2]; // Assuming column [2] is user_id
+              let voter_name = &record[3]; // Assuming column [3] is voter_name
+              let has_voted = record[5].parse::<bool>()?; // Assuming  column [5] is has_voted
+
+              if current_user_id == user_id {
+                  return Ok((!has_voted, Some(voter_name.to_string())));
+              }
+          }
+
+          Ok((false, None)) // User ID not found or has already voted
+      }
 }
 
 fn main() {
@@ -124,9 +157,11 @@ fn main() {
     election_ballot.add_candidate(2, String::from("Sarah Lee"), String::from("Libertarian"));
 
     // Registering voters
-    election_ballot.register_voter(String::from("Alice"), String::from("1990-05-15"));
-    election_ballot.register_voter(String::from("Bob"), String::from("1985-09-20"));
-    election_ballot.register_voter(String::from("Charlie"), String::from("1978-12-10"));
+  // Example of registering voters with a user ID
+  election_ballot.register_voter(String::from("user001"), String::from("Alice"), String::from("1990-05-15"));
+  election_ballot.register_voter(String::from("user002"), String::from("Bob"), String::from("1985-09-20"));
+  election_ballot.register_voter(String::from("user003"), String::from("Charlie"), String::from("1978-12-10"));
+
 
     // Saving the election ballot and voter information to CSV
     if let Err(err) = election_ballot.save_to_csv() {
@@ -135,4 +170,25 @@ fn main() {
     }
 
     println!("Data saved to ballot.csv and registered_voters.csv");
+
+  // Simulation of user voting process
+  let voter_id = String::from("user003"); // Assume "user005" is the current user
+
+  match election_ballot.is_voter_registered(&voter_id) {
+      Ok((is_registered, name_option)) => {
+          if is_registered {
+              if let Some(voter_name) = name_option {
+                  println!("Welcome, {}. Please review the ballot:", voter_name);
+
+                  // Todo:
+                  // create the cast vote function inside the ElectionBallot Impl
+                  // Call casting the vote method here as: 
+                    // election_ballot.cast_vote_by_user_id(&voter_id);
+              }
+          } else {
+              println!("Voter is not registered or has already voted.");
+          }
+      },
+      Err(e) => println!("An error occurred while checking voter registration: {}", e),
+  }
 }
