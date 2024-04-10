@@ -1,16 +1,13 @@
 extern crate csv;
 
 use std::error::Error;
+use std::fs::OpenOptions;
+use std::io::{self};
 use std::process;
 
 struct Candidate {
     name: String,
     political_party: String,
-}
-
-struct Voter {
-    name: String,
-    date_of_birth: String,
 }
 
 struct Office {
@@ -19,120 +16,165 @@ struct Office {
 }
 
 struct ElectionBallot {
-    ballot_id: u32,
     election_name: String,
     offices: Vec<Office>,
-    registered_voters: Vec<Voter>,
 }
 
 impl ElectionBallot {
-    fn new(ballot_id: u32, election_name: String) -> ElectionBallot {
-        ElectionBallot {
-            ballot_id,
-            election_name,
-            offices: Vec::new(),
-            registered_voters: Vec::new(),
-        }
-    }
+    // fn new(election_name: String) -> ElectionBallot {
+    //     ElectionBallot {
+    //         election_name,
+    //         offices: Vec::new(),
+    //     }
+    // }
 
-    fn add_office(&mut self, office_name: String) {
-        let office = Office {
-            office_name,
-            candidates: Vec::new(),
-        };
-        self.offices.push(office);
-    }
-
-    fn add_candidate(&mut self, office_index: usize, name: String, party: String) {
-        if let Some(office) = self.offices.get_mut(office_index) {
-            let candidate = Candidate {
-                name,
-                political_party: party,
-            };
-            office.candidates.push(candidate);
-        } else {
-            println!("Invalid office index.");
-        }
-    }
-
-    fn register_voter(&mut self, name: String, date_of_birth: String) {
-        let voter = Voter {
-            name,
-            date_of_birth,
-        };
-        self.registered_voters.push(voter);
-    }
+    // fn add_office(&mut self, office_name: String, candidates: Vec<Candidate>) {
+    //     let office = Office {
+    //         office_name,
+    //         candidates,
+    //     };
+    //     self.offices.push(office);
+    // }
 
     fn save_to_csv(&self) -> Result<(), Box<dyn Error>> {
-        // Save candidates to ballot.csv
-        let mut writer = csv::Writer::from_path("ballot.csv")?;
-        writer.write_record(&[
-            "Ballot ID",
-            "Election Name",
-            "Office Name",
-            "Candidate Name",
-            "Political Party",
-        ])?;
+        let file_path = "ballot.csv";
+
+        let file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .append(true)
+            .open(file_path)?;
+
+        let mut file_is_empty = false;
+        let metadata = file.metadata()?;
+        if metadata.len() == 0 {
+            file_is_empty = true;
+        }
+
+        let mut writer = csv::WriterBuilder::new()
+            .has_headers(file_is_empty)
+            .from_writer(file);
+
         for office in &self.offices {
             for candidate in &office.candidates {
-                writer.write_record(&[
-                    &self.ballot_id.to_string(),
+                writer.serialize((
                     &self.election_name,
                     &office.office_name,
                     &candidate.name,
                     &candidate.political_party,
-                ])?;
+                ))?;
             }
         }
         writer.flush()?;
-
-        // Save voters to registered_voters.csv
-        let mut voter_writer = csv::Writer::from_path("registered_voters.csv")?;
-        voter_writer.write_record(&[
-            "Ballot ID",
-            "Election Name",
-            "Voter Name",
-            "Date of Birth",
-        ])?;
-        for voter in &self.registered_voters {
-            voter_writer.write_record(&[
-                &self.ballot_id.to_string(),
-                &self.election_name,
-                &voter.name,
-                &voter.date_of_birth,
-            ])?;
-        }
-        voter_writer.flush()?;
-
         Ok(())
     }
 }
 
-fn main() {
-    let mut election_ballot = ElectionBallot::new(1, String::from("General Election"));
+fn create_election_ballot() -> ElectionBallot {
+    println!("Creating a new election ballot...");
 
-    // Adding offices to the election ballot
-    election_ballot.add_office(String::from("President"));
-    election_ballot.add_office(String::from("Representative"));
-    election_ballot.add_office(String::from("Judge"));
+    println!("Enter the election name:");
+    let mut election_name = String::new();
+    io::stdin()
+        .read_line(&mut election_name)
+        .expect("Failed to read line");
+    let election_name = election_name.trim().to_string();
 
-    // Adding candidates to each office
-    election_ballot.add_candidate(0, String::from("John Doe"), String::from("Independent"));
-    election_ballot.add_candidate(0, String::from("Jane Smith"), String::from("Democratic"));
-    election_ballot.add_candidate(1, String::from("Alice Johnson"), String::from("Republican"));
-    election_ballot.add_candidate(1, String::from("Bob Anderson"), String::from("Green Party"));
-    election_ballot.add_candidate(2, String::from("Sarah Lee"), String::from("Libertarian"));
+    let mut offices = Vec::new();
 
-    // Registering voters
-    election_ballot.register_voter(String::from("Alice"), String::from("1990-05-15"));
-    election_ballot.register_voter(String::from("Bob"), String::from("1985-09-20"));
-    election_ballot.register_voter(String::from("Charlie"), String::from("1978-12-10"));
+    loop {
+        println!("Enter the office name (or type 'done' to finish adding offices):");
+        let mut office_name = String::new();
+        io::stdin()
+            .read_line(&mut office_name)
+            .expect("Failed to read line");
+        let office_name = office_name.trim().to_string();
 
-    // Saving the election ballot and voter information to CSV
-    if let Err(err) = election_ballot.save_to_csv() {
-        eprintln!("Error writing CSV: {}", err);
-        process::exit(1);
+        if office_name == "done" {
+            break;
+        }
+
+        let mut candidates = Vec::new();
+        loop {
+            println!("Enter the candidate name for office '{}':", office_name);
+            let mut candidate_name = String::new();
+            io::stdin()
+                .read_line(&mut candidate_name)
+                .expect("Failed to read line");
+            let candidate_name = candidate_name.trim().to_string();
+
+            println!(
+                "Enter the political party for candidate '{}':",
+                candidate_name
+            );
+            let mut political_party = String::new();
+            io::stdin()
+                .read_line(&mut political_party)
+                .expect("Failed to read line");
+            let political_party = political_party.trim().to_string();
+
+            let candidate = Candidate {
+                name: candidate_name,
+                political_party,
+            };
+            candidates.push(candidate);
+
+            println!(
+                "Do you want to add another candidate for office '{}'? (yes/no)",
+                office_name
+            );
+            let mut input = String::new();
+            io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+            let input = input.trim().to_lowercase();
+            if input != "yes" {
+                break;
+            }
+        }
+
+        let office = Office {
+            office_name,
+            candidates,
+        };
+        offices.push(office);
     }
 
-    println!("Data saved to ballot.csv and registered_voters.csv");
+    ElectionBallot {
+        election_name,
+        offices,
+    }
+}
+
+fn main() {
+    loop {
+        println!("Menu:");
+        println!("1. Create Election Ballot");
+        println!("2. Exit");
+        println!("Enter your choice:");
+
+        let mut input = String::new();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+
+        match input.trim() {
+            "1" => {
+                let election_ballot = create_election_ballot();
+                if let Err(err) = election_ballot.save_to_csv() {
+                    eprintln!("Error writing CSV: {}", err);
+                    process::exit(1);
+                }
+                println!("Election ballot data appended to ballot.csv");
+            }
+            "2" => {
+                println!("Exiting...");
+                break;
+            }
+            _ => {
+                println!("Invalid choice. Please enter 1 or 2.");
+            }
+        }
+    }
 }
