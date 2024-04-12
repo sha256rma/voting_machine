@@ -4,7 +4,7 @@ use std::fs::OpenOptions;
 use csv;
 
 pub fn save_election_ballot_to_csv(ballot: &ElectionBallot) -> Result<(), Box<dyn Error>> {
-    let file_path = "new_ballot.csv";
+    let file_path = "ballot.csv";
     // The rest of the implementation follows, adjusting `self` to `ballot`.
 
     let file = OpenOptions::new()
