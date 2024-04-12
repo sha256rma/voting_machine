@@ -1,0 +1,3 @@
+username,password,email
+myusername,"$argon2id$v=19$m=19456,t=2,p=1$7shGcJF4MK3bAK6LpoSfWQ$VablClFmf9WhdAPaMvgeqmYR4o5w6inzLeRlN7k5B/Y",myuser@gmail.com
+John Doe,"$argon2id$v=19$m=19456,t=2,p=1$fW7cDVJqaXS+FFbaf1RRRQ$jOPYB0T2UUIl/r5aGc6GDThrg8+suaTxQ+1XsI9jO9I",johndoe@gmail.com
