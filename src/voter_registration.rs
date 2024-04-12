@@ -7,7 +7,7 @@ use std::io::{self};
 
 
 pub fn register_voter(voter: Voter) -> Result<(), Box<dyn Error>> {
-    let file_path = "new_registered_voters.csv";
+    let file_path = "registered_voters.csv";
     let file_exists = Path::new(file_path).exists();
 
     let file = OpenOptions::new()
