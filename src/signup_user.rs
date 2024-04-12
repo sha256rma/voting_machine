@@ -1,10 +1,10 @@
 use crate::models::User;
-use rand::{rngs::OsRng, RngCore};
+use rand::rngs::OsRng;
 use std::error::Error;
 use std::io::{self};
 
 use csv::{Reader, Writer};
-use std::fs::{self, OpenOptions};
+use std::fs::OpenOptions;
 use std::path::Path;
 
 use argon2::{
