@@ -7,7 +7,7 @@ use std::io::{self};
 
 
 pub fn register_voter(voter: Voter) -> Result<(), Box<dyn Error>> {
-    let file_path = "new_registered_voters.csv";
+    let file_path = "registered_voters.csv";
     let file_exists = Path::new(file_path).exists();
 
     let file = OpenOptions::new()
@@ -25,7 +25,7 @@ pub fn register_voter(voter: Voter) -> Result<(), Box<dyn Error>> {
 
     // Manually write the voter information to the CSV
     wtr.write_record(&[
-        voter.user_id.to_string(),
+        voter.national_id,
         voter.name,
         voter.date_of_birth,
         voter.has_voted.to_string(),
@@ -39,9 +39,9 @@ pub fn interactively_register_voter() -> Result<(), Box<dyn Error>> {
     println!("Registering a new voter...");
 
     println!("Enter user ID:");
-    let mut user_id = String::new();
-    io::stdin().read_line(&mut user_id)?;
-    let user_id: u64 = user_id.trim().parse()?;
+    let mut national_id = String::new();
+    io::stdin().read_line(&mut national_id)?;
+    national_id = national_id.trim().to_string();
 
     println!("Enter name:");
     let mut name = String::new();
@@ -53,7 +53,7 @@ pub fn interactively_register_voter() -> Result<(), Box<dyn Error>> {
     io::stdin().read_line(&mut date_of_birth)?;
     let date_of_birth = date_of_birth.trim().to_string();
 
-    let voter = Voter::new(user_id, name, date_of_birth);
+    let voter = Voter::new(national_id, name, date_of_birth);
 
     register_voter(voter)?;
 
