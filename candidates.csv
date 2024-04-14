@@ -1,4 +1,6 @@
 Candidate_ID,Candidate_Name,Office_ID,Political_Party
-64ea7fab-d956-4fa4-99ba-745b9748ce69,John Doe,9e7f2785-b64e-4640-9c01-07f899307868,Democratic
-14d15e8c-1c56-4f65-8c39-12f6de575a78,done,728a84c9-9a6b-4442-8da5-884edc3dc0ce,asd
-f0ca3c7e-7378-441d-9b41-00a766892d34,Robert California,88eccbe9-5936-4105-984f-1c6b3fcb971b,Democratic
+345099dc-9f42-4e6a-a664-b0d7c6eeecb4,Modi,acae8905-e9f8-494a-a57b-2f218ba416d6,BJP
+fe24f4dd-a4a1-4bf4-8808-6ae7bf81e7c7,Adam,acae8905-e9f8-494a-a57b-2f218ba416d6,Party 1
+b5df2be1-60e3-40ab-bc23-251ab53dd7bd,Bob,acae8905-e9f8-494a-a57b-2f218ba416d6,Party 2
+ddf2a82c-304a-40db-971a-9f9261e48ac7,Zuma,40addfe2-5f19-4553-ab55-2fc29ad948f4,Democrat
+ea775a77-3837-486f-bb10-3a548751f591,Yolo,c9521037-597b-4845-824b-6821c65fdaf0,people's party
