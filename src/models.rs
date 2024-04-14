@@ -1,28 +1,71 @@
 // models.rs
 
-pub struct Candidate {
+use uuid::Uuid;
+use crate::save_ballot::ToCsvRecord;
+
+pub struct Election {
+    pub election_id: Uuid,
     pub name: String,
+    pub is_open: bool,
+}
+
+impl ToCsvRecord for Election {
+    // Convert the Election instance into a CSV record
+    fn to_csv_record(&self) -> Vec<String> {
+        vec![
+            self.election_id.to_string(),
+            self.name.clone(),
+            self.is_open.to_string(),
+        ]
+    }
+}
+
+pub struct Candidate {
+    pub candidate_id: Uuid,
+    pub name: String,
+    pub office_id: Uuid,
     pub political_party: String,
+}
+impl ToCsvRecord for Candidate {
+    fn to_csv_record(&self) -> Vec<String> {
+        vec![
+            self.candidate_id.to_string(),
+            self.name.clone(),  
+            self.office_id.to_string(),
+            self.political_party.clone(),
+        ]
+    }
 }
 
 pub struct Office {
+    pub office_id: Uuid,
+    pub election_id: Uuid, // Foreign Key linking to Election
     pub office_name: String,
-    pub candidates: Vec<Candidate>,
+    pub election_name: String,
 }
 
-pub struct ElectionBallot {
-    pub election_name: String,
-    pub offices: Vec<Office>,
+impl ToCsvRecord for Office {
+    fn to_csv_record(&self) -> Vec<String> {
+        vec![
+            self.office_id.to_string(),
+            self.office_name.clone(),  
+            self.election_id.to_string(),
+            self.election_name.clone(),
+        ]
+    }
 }
+
 pub struct Voter {
-    pub national_id: String,          // consider using a crate to generate ids
+    pub user_id: String,
+    pub national_id: String,
     pub name: String,
     pub date_of_birth: String, // Consider using a date type with an appropriate crate
     pub has_voted: bool,
 }
 impl Voter {
-    pub fn new(national_id: String, name: String, date_of_birth: String) -> Voter {
+    pub fn new(user_id:String, national_id: String, name: String, date_of_birth: String) -> Voter {
         Voter {
+            user_id,
             national_id,
             name,
             date_of_birth,
@@ -32,21 +75,21 @@ impl Voter {
 }
 
 pub struct User {
+    pub user_id: Uuid,
     pub name: String,
     pub date_of_birth: String,
     pub national_id: String,
-    pub password: String,
     pub has_registered: bool,
     pub has_voted: bool,
     
 }
 impl User {
-    pub fn new(name: String, date_of_birth: String, national_id: String, password: String) -> User {
+    pub fn new(name: String, date_of_birth: String, national_id: String) -> User {
         User {
+            user_id: Uuid::new_v4(),
             name,
             date_of_birth,
             national_id,
-            password,
             has_registered: false,
             has_voted: false,
           
