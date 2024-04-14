@@ -1,39 +1,35 @@
-use crate::models::ElectionBallot;
-use std::error::Error;
 use std::fs::OpenOptions;
 use csv;
+use csv::Writer;
+use std::path::Path;
+use std::error::Error as StdError;
 
-pub fn save_election_ballot_to_csv(ballot: &ElectionBallot) -> Result<(), Box<dyn Error>> {
-    let file_path = "ballot.csv";
-    // The rest of the implementation follows, adjusting `self` to `ballot`.
+// Trait to be implemented by structs that can be converted to CSV records
+pub trait ToCsvRecord {
+    fn to_csv_record(&self) -> Vec<String>;
+}
 
-    let file = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .append(true)
-        .open(file_path)?;
 
-    let mut file_is_empty = false;
-    let metadata = file.metadata()?;
-    if metadata.len() == 0 {
-        file_is_empty = true;
-    }
+pub fn save_to_csv<T: ToCsvRecord>(records: &[T], headers: &[&str], file_path: &str) -> Result<(), Box<dyn StdError>> {
+    let path = Path::new(file_path);
+    let file_exists = path.exists();
+    let file = OpenOptions::new().append(true).create(true).read(true).open(file_path)?;
 
-    let mut writer = csv::WriterBuilder::new()
-        .has_headers(file_is_empty)
-        .from_writer(file);
-
-    for office in &ballot.offices { // Adjusted from self to ballot
-        for candidate in &office.candidates {
-            writer.serialize((
-                &ballot.election_name, // Adjusted from self to ballot
-                &office.office_name,
-                &candidate.name,
-                &candidate.political_party,
-            ))?;
+    // If the file is newly created or empty, write the headers
+    if !file_exists || file.metadata()?.len() == 0 {
+        let mut wtr = Writer::from_writer(&file);
+        wtr.write_record(headers)?;
+        for record in records {
+            wtr.write_record(record.to_csv_record())?;
         }
+        wtr.flush()?;
+    } else {
+        // If the file already exists and is not empty, just append the records
+        let mut wtr = Writer::from_writer(&file);
+        for record in records {
+            wtr.write_record(record.to_csv_record())?;
+        }
+        wtr.flush()?;
     }
-    writer.flush()?;
     Ok(())
 }

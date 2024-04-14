@@ -7,7 +7,6 @@ mod voter_registration;
 mod signup_user;
 
 use crate::create_ballot::public_interface_to_create_ballot;
-use crate::save_ballot::save_election_ballot_to_csv;
 use crate::signup_user::signup_user;
 use voter_registration::interactively_register_voter;
 use std::process;
@@ -27,23 +26,22 @@ fn main() {
 
         match input.trim() {
             "1" => {
-                let election_ballot = public_interface_to_create_ballot();
-                if let Err(err) = save_election_ballot_to_csv(&election_ballot) {
+                if let Err(err) = public_interface_to_create_ballot() {
                     eprintln!("Error writing CSV: {}", err);
                     process::exit(1);
                 }
-                println!("Election ballot data appended to ballot.csv");
+                
             },
             "2" => {
                 if let Err(err) = signup_user() {
                     eprintln!("Error signing up a user: {}", err);
-                    process::exit(1);
+                    //process::exit(1);
                 }
             },
             "3" => {
                 if let Err(err) = interactively_register_voter() {
                     eprintln!("Error registering voter: {}", err);
-                    process::exit(1);
+                    //process::exit(1);
                 }
             },
             "4" => {

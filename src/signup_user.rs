@@ -1,20 +1,11 @@
 use crate::models::User;
-use rand::rngs::OsRng;
+// use rand::rngs::OsRng;
 use std::error::Error;
 use std::io::{self};
 use regex::Regex;
-
 use csv::{Reader, Writer};
 use std::fs::OpenOptions;
 use std::path::Path;
-
-use argon2::{
-    password_hash::{
-        PasswordHasher, SaltString
-    },
-    Argon2
-};
-
 
 
 fn validate_date_of_birth(dob: &str) -> Result<(), String> {
@@ -71,13 +62,14 @@ fn save_user(user: &User) -> Result<(), Box<dyn Error>> {
   
     // If the file did not previously exist, write the header
     if !file_exists {
-        wtr.write_record(&["name","date_of_birth","national_id", "password", "has_registered", "has_voted"])?;
+        wtr.write_record(&["user_id", "name","date_of_birth","national_id", "has_registered", "has_voted"])?;
     }
     wtr.write_record(&[
+      &user.user_id.to_string(),
       &user.name,
       &user.date_of_birth,
       &user.national_id,
-      &user.password,
+      //&user.password,
       &user.has_voted.to_string(),
       &user.has_registered.to_string(),
       
@@ -89,7 +81,7 @@ fn save_user(user: &User) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn signup_user() -> Result<User, Box<dyn Error>> {
-  let mut password = String::new();
+  //let mut password = String::new();
   let mut name = String::new();
   let mut date_of_birth = String::new();
   let mut national_id = String::new();
@@ -136,10 +128,6 @@ pub fn signup_user() -> Result<User, Box<dyn Error>> {
       }
   }
 
-
-  println!("Enter password:");
-  io::stdin().read_line(&mut password)?;
-
   name = name.trim().to_string();
   date_of_birth = date_of_birth.trim().to_string();
   national_id = national_id.trim().to_string();
@@ -148,20 +136,8 @@ pub fn signup_user() -> Result<User, Box<dyn Error>> {
       return Err("National ID already exists. Voter Already Signed Up".into());
   }
 
-    // Generate a salt using SaltString
-    let salt = SaltString::generate(&mut OsRng);
-
-    // Argon2 with default params (Argon2id v19)
-    let argon2 = Argon2::default();
-
-    // Hash password to PHC string ($argon2id$v=19$...)
-    let password_hash = match argon2.hash_password(password.trim().as_bytes(), &salt) {
-        Ok(hash) => hash.to_string(),
-        Err(e) => return Err(e.to_string().into()), // Convert the error to a String and then into a Box<dyn Error>
-    };
-
-    let user = User::new(name, date_of_birth, national_id, password_hash);
-
+    let user = User::new(name, date_of_birth, national_id);
+    
     // Call save_user to save the newly created user
     save_user(&user)?;
 

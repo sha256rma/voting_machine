@@ -1,3 +1,3 @@
-name,date_of_birth,national_id,password,has_registered,has_voted
-John Doe,10-10-1980,123-456-789,"$argon2id$v=19$m=19456,t=2,p=1$vHRORbr6J4Se5ICRJG62GA$9Yy6CdNTO6dEf3j7IHue3wsiAg4Fput8JP08EoZx1Uk",false,false
-Smith James,06-06-2006,111-222-333,"$argon2id$v=19$m=19456,t=2,p=1$hnac1cWhFEOLOULMZmwJrQ$9m0ste2lJGndzzcgs3s0JI7pD1oEyfwwMIgOJvjr1OU",false,false
+user_id,name,date_of_birth,national_id,has_registered,has_voted
+11839e79-451a-4325-8112-f3e15f0140a4,John Doe,10-10-1980,123-456-789,true,false
+52d358db-0714-4f60-bbde-d4b2ab7f1c43,Will Smith,10-10-1978,111-222-333,false,false
