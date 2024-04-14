@@ -15,15 +15,15 @@ pub struct ElectionBallot {
     pub offices: Vec<Office>,
 }
 pub struct Voter {
-    pub user_id: u64,          // consider using a crate to generate ids
+    pub national_id: String,          // consider using a crate to generate ids
     pub name: String,
-    pub date_of_birth: String, // Consider using a date type with an appropriate crate (for validation)
+    pub date_of_birth: String, // Consider using a date type with an appropriate crate
     pub has_voted: bool,
 }
 impl Voter {
-    pub fn new(user_id: u64, name: String, date_of_birth: String) -> Voter {
+    pub fn new(national_id: String, name: String, date_of_birth: String) -> Voter {
         Voter {
-            user_id,
+            national_id,
             name,
             date_of_birth,
             has_voted: false,
@@ -32,7 +32,24 @@ impl Voter {
 }
 
 pub struct User {
-    pub username: String,
+    pub name: String,
+    pub date_of_birth: String,
+    pub national_id: String,
     pub password: String,
-    pub email: String,
+    pub has_registered: bool,
+    pub has_voted: bool,
+    
+}
+impl User {
+    pub fn new(name: String, date_of_birth: String, national_id: String, password: String) -> User {
+        User {
+            name,
+            date_of_birth,
+            national_id,
+            password,
+            has_registered: false,
+            has_voted: false,
+          
+        }
+    }
 }
