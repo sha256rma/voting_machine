@@ -1,3 +1,3 @@
-username,password,email
-myusername,"$argon2id$v=19$m=19456,t=2,p=1$7shGcJF4MK3bAK6LpoSfWQ$VablClFmf9WhdAPaMvgeqmYR4o5w6inzLeRlN7k5B/Y",myuser@gmail.com
-John Doe,"$argon2id$v=19$m=19456,t=2,p=1$fW7cDVJqaXS+FFbaf1RRRQ$jOPYB0T2UUIl/r5aGc6GDThrg8+suaTxQ+1XsI9jO9I",johndoe@gmail.com
+name,date_of_birth,national_id,password,has_registered,has_voted
+John Doe,10-10-1980,123-456-789,"$argon2id$v=19$m=19456,t=2,p=1$vHRORbr6J4Se5ICRJG62GA$9Yy6CdNTO6dEf3j7IHue3wsiAg4Fput8JP08EoZx1Uk",false,false
+Smith James,06-06-2006,111-222-333,"$argon2id$v=19$m=19456,t=2,p=1$hnac1cWhFEOLOULMZmwJrQ$9m0ste2lJGndzzcgs3s0JI7pD1oEyfwwMIgOJvjr1OU",false,false
