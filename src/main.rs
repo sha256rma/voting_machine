@@ -27,8 +27,7 @@ fn main() {
 
     if let Some(_) = std::env::args().nth(1) {
         if let Err(e) = log4rs::init_file("../log4rs.yml", Default::default()) {
-            eprintln!("Failed to initialize logger: {}", e);
-            // Optionally, you could exit the program here or handle the error differently
+            eprintln!("{}", e);
         }
     }
 
