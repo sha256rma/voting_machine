@@ -9,11 +9,14 @@ mod open_election;
 mod save_ballot;
 mod signup_user;
 mod voter_registration;
+mod cast_vote;
+mod tally_votes;
 
 use crate::authenticate_admin::authenticate;
 use crate::create_ballot::public_interface_to_create_ballot;
 use crate::signup_user::signup_user;
-
+use crate::cast_vote::authenticate_voter;
+use crate::tally_votes::tally_vote;
 use close_election::close_election;
 use open_election::open_election;
 use voter_registration::interactively_register_voter;
@@ -41,8 +44,10 @@ fn main() {
             println!("3. Register a New Voter");
             println!("4. Open Election for Voting");
             println!("5. Close Election to Prevent Further Votes");
+            println!("6. Cast Vote");
+            println!("7. Tally Votes");
         }
-        println!("6. Exit");
+        println!("8. Exit");
         println!("Enter your choice:");
 
         let mut input = String::new();
@@ -124,11 +129,29 @@ fn main() {
                 }
             }
             "6" => {
+                if authenticated {
+                    if let Err(err) = authenticate_voter() {
+                        eprintln!("Error Casting Vote: {}", err);
+                    }
+                } else {
+                    println!("Authenticated access required!");
+                }
+            }
+            "7" => {
+                if authenticated {
+                    if let Err(err) = tally_vote() {
+                        eprintln!("Error Tallying Votes: {}", err);
+                    }
+                } else {
+                    println!("Authenticated access required!");
+                }
+            }
+            "8" => {
                 println!("Exiting...");
                 break;
             }
             _ => {
-                println!("Invalid choice. Please enter 0, 1, 2, 3, 4, 5, or 6.");
+                println!("Invalid choice. Please enter 0, 1, 2, 3, 4, 5, 6, 7, or 8.");
             }
         }
     }
