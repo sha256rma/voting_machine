@@ -27,6 +27,7 @@ pub struct Candidate {
     pub name: String,
     pub office_id: Uuid,
     pub political_party: String,
+    pub election_id: Uuid,
 }
 impl ToCsvRecord for Candidate {
     fn to_csv_record(&self) -> Vec<String> {
@@ -35,6 +36,7 @@ impl ToCsvRecord for Candidate {
             self.name.clone(),
             self.office_id.to_string(),
             self.political_party.clone(),
+            self.election_id.to_string()
         ]
     }
 }

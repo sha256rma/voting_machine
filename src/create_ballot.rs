@@ -33,7 +33,7 @@ fn create_election_ballot() -> Result<(), Box<dyn Error>> {
     info!("{}: Election created: {:?}", timestamp, election);
 
     // Saving election
-    let election_headers = ["Election_ID", "Election_Name", "Is_Open"];
+    let election_headers = ["election_id", "name", "is_open"];
     if let Err(err) = save_to_csv(&[election], &election_headers, "elections.csv") {
         // Log error if saving fails
         let timestamp = Utc::now();
@@ -86,6 +86,7 @@ fn create_election_ballot() -> Result<(), Box<dyn Error>> {
                 name: candidate_name.clone(),
                 office_id,
                 political_party,
+                election_id
             };
             candidates.push(candidate.clone()); // Clone the candidate and push it into the vector
 
@@ -108,10 +109,11 @@ fn create_election_ballot() -> Result<(), Box<dyn Error>> {
             if input != "yes" {
                 // Saving candidates
                 let candidates_headers = [
-                    "Candidate_ID",
-                    "Candidate_Name",
-                    "Office_ID",
-                    "Political_Party",
+                    "candidate_id",
+                    "name",
+                    "office_id",
+                    "political_party",
+                    "election_id"
                 ];
                 if let Err(err) = save_to_csv(&candidates, &candidates_headers, "candidates.csv") {
                     // Log error if saving fails
@@ -138,7 +140,7 @@ fn create_election_ballot() -> Result<(), Box<dyn Error>> {
     }
 
     // Saving offices
-    let offices_headers = ["Office_ID", "Office_Name", "Election_ID", "Election_Name"];
+    let offices_headers = ["office_id", "office_name", "election_id", "election_name"];
     if let Err(err) = save_to_csv(&offices, &offices_headers, "offices.csv") {
         // Log error if saving fails
         let timestamp = Utc::now();
