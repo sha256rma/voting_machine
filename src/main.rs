@@ -15,11 +15,11 @@ use std::process;
 use voter_registration::interactively_register_voter;
 
 fn main() {
-    let mut admin = false;
+    let mut authenticated = false;
 
     loop {
         println!("Menu:");
-        if !admin {
+        if !authenticated {
             println!("0. Authenticate");
         }
         println!("1. Create Election Ballot");
@@ -37,7 +37,7 @@ fn main() {
             "0" => match authenticate() {
                 Ok(access_granted) => {
                     if access_granted {
-                        admin = true;
+                        authenticated = true;
                         println!("Authentication successful!");
                     } else {
                         println!("Authentication failed!");
@@ -49,33 +49,33 @@ fn main() {
                 }
             },
             "1" => {
-                if admin {
+                if authenticated {
                     if let Err(err) = public_interface_to_create_ballot() {
                         eprintln!("Error writing CSV: {}", err);
                         process::exit(1);
                     }
                 } else {
-                    println!("Admin access required!");
+                    println!("Authenticated access required!");
                 }
             }
             "2" => {
-                if admin {
+                if authenticated {
                     if let Err(err) = signup_user() {
                         eprintln!("Error signing up a user: {}", err);
                         //process::exit(1);
                     }
                 } else {
-                    println!("Admin access required!");
+                    println!("Authenticated access required!");
                 }
             }
             "3" => {
-                if admin {
+                if authenticated {
                     if let Err(err) = interactively_register_voter() {
                         eprintln!("Error registering voter: {}", err);
                         //process::exit(1);
                     }
                 } else {
-                    println!("Admin access required!");
+                    println!("Authenticated access required!");
                 }
             }
             "4" => {

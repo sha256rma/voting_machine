@@ -1,8 +1,13 @@
 use argon2::{password_hash::PasswordHash, password_hash::PasswordVerifier, Argon2};
+use chrono::Utc;
+use csv::Writer;
+use serde_json;
 use std::error::Error;
+use std::fs::OpenOptions;
 use std::io::{self};
 use std::process::Command;
 use std::vec::Vec;
+use uuid::Uuid;
 
 pub fn authenticate() -> Result<bool, Box<dyn Error>> {
     // Command to run the Python script
@@ -11,26 +16,23 @@ pub fn authenticate() -> Result<bool, Box<dyn Error>> {
         .output()?;
 
     if output.status.success() {
-        // Parse the output JSON to extract the vector s
+        // Parse the output JSON to extract the session ID
         let output_string = String::from_utf8_lossy(&output.stdout);
-        // Split the output into lines
-        let lines: Vec<&str> = output_string.lines().collect();
+        let session_id = parse_session_id(&output_string);
 
-        // Exclude the last line
-        let output_without_last_line = lines
-            .iter()
-            .take(lines.len() - 1)
-            .cloned()
-            .collect::<Vec<&str>>()
-            .join("\n");
+        println!("Session ID: {}", session_id);
 
-        println!("{}", output_without_last_line);
+        // Get current timestamp
+        let timestamp = Utc::now();
 
-        // Parse the last line of the output as JSON
+        // Write to CSV file
+        if let Err(err) = append_to_audit_trail(&session_id, &timestamp) {
+            eprintln!("Failed to append to audit trail: {}", err);
+        }
+
         let s_str = output_string.lines().last().ok_or("No output")?;
         let s: Vec<i32> = serde_json::from_str(s_str)?;
 
-        // Authentication
         let persistent_master_key: String = s.iter().map(|&x| x.to_string()).collect();
         let password_hash: String =
             "$argon2i$v=19$m=16,t=2,p=1$SW9Xb2o1OFhyYVl3NEtBdw$0yzqSaIweNuBoJSi8aKvcw".to_string();
@@ -67,4 +69,30 @@ fn verify_password(argon2: &Argon2, password: &str, parsed_hash: &PasswordHash) 
     argon2
         .verify_password(password.as_bytes(), parsed_hash)
         .is_ok()
+}
+
+fn append_to_audit_trail(session_id: &str, timestamp: &chrono::DateTime<Utc>) -> io::Result<()> {
+    let file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open("audit_trail.csv")?;
+    let mut wtr = Writer::from_writer(file);
+    wtr.write_record(&[session_id, &timestamp.to_string()])?;
+    wtr.flush()?;
+    Ok(())
+}
+
+fn parse_session_id(output_string: &str) -> String {
+    let session_id = output_string
+        .lines()
+        .find(|line| line.starts_with("Session Id:"))
+        .map(|line| {
+            line.trim_start_matches("Session Id:")
+                .trim_start_matches("0x")
+                .trim()
+        })
+        .unwrap_or("");
+
+    let uuid = Uuid::new_v4();
+    format!("{}-{}", &session_id[2..], uuid)
 }

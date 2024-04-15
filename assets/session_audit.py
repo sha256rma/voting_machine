@@ -17,7 +17,6 @@ def G(s, A):
 
 
 A = create_A()
-# print("Session Id Generator:\n")
 generator = "".join(["".join(map(str, row)) for row in A])
 
 # Creating a random binary vector s with 8 entries
@@ -25,16 +24,13 @@ s = np.random.randint(2, size=8)
 
 Gs = G(s, A)
 
-
-print("\nSession Id:", end=" ")
 s_id = "".join(map(str, Gs))
 binary_string = generator + s_id
-# Convert binary string to integer
 binary_integer = int(binary_string, 2)
+session_id = hex(binary_integer)
 
-# Convert integer to hexadecimal
-hexadecimal_string = hex(binary_integer)
-print(hexadecimal_string)
+print("\nSession Id:", end=" ")
+print(session_id)
 
 
 def return_s(s):
