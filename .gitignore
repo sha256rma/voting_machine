@@ -1,1 +1,7 @@
 /target
+audit_trail.csv
+candidates.csv
+elections.csv
+offices.csv
+registered_voters.csv
+users.csv
