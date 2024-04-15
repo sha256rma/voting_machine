@@ -40,7 +40,7 @@ pub fn authenticate() -> Result<bool, Box<dyn Error>> {
         let parsed_hash = PasswordHash::new(&password_hash).expect("Failed to parse hash");
         let argon2 = Argon2::default();
 
-        println!("\nEnter password or master key for election official:");
+        println!("\nEnter password for election official:");
         let mut input = String::new();
         io::stdin().read_line(&mut input)?;
 
