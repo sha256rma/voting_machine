@@ -1,4 +1,5 @@
 extern crate csv;
+extern crate env_logger;
 
 mod authenticate_admin;
 mod close_election;
@@ -12,13 +13,24 @@ mod voter_registration;
 use crate::authenticate_admin::authenticate;
 use crate::create_ballot::public_interface_to_create_ballot;
 use crate::signup_user::signup_user;
+
 use close_election::close_election;
 use open_election::open_election;
+use voter_registration::interactively_register_voter;
+
+use log4rs;
 use std::io;
 use std::process;
-use voter_registration::interactively_register_voter;
+
 fn main() {
     let mut authenticated = false;
+
+    if let Some(_) = std::env::args().nth(1) {
+        if let Err(e) = log4rs::init_file("../log4rs.yml", Default::default()) {
+            eprintln!("Failed to initialize logger: {}", e);
+            // Optionally, you could exit the program here or handle the error differently
+        }
+    }
 
     loop {
         println!("Menu:");

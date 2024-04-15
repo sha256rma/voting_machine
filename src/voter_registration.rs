@@ -1,12 +1,12 @@
+use crate::models::Voter;
+use csv::{ReaderBuilder, Trim, Writer};
+use log::{error, info};
+use regex::Regex;
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::OpenOptions;
-use crate::models::Voter;
-use std::path::Path;
-use regex::Regex;
 use std::io::{self};
-use csv::{ReaderBuilder, Writer, Trim};
-use serde::{Deserialize, Serialize};
-
+use std::path::Path;
 
 pub fn register_voter(voter: Voter) -> Result<(), Box<dyn Error>> {
     let file_path = "registered_voters.csv";
@@ -22,19 +22,26 @@ pub fn register_voter(voter: Voter) -> Result<(), Box<dyn Error>> {
 
     // If the file did not previously exist, write the header
     if !file_exists {
-        wtr.write_record(&["user_id", "national_id", "name", "date_of_birth", "has_voted"])?;
+        wtr.write_record(&[
+            "user_id",
+            "national_id",
+            "name",
+            "date_of_birth",
+            "has_voted",
+        ])?;
     }
 
     // Manually write the voter information to the CSV
     wtr.write_record(&[
         voter.user_id.to_string(),
-        voter.national_id,
-        voter.name,
-        voter.date_of_birth,
+        voter.national_id.clone(),
+        voter.name.clone(),
+        voter.date_of_birth.clone(),
         voter.has_voted.to_string(),
     ])?;
 
     wtr.flush()?;
+    info!("Voter {} successfully registered.", voter.clone().name);
     Ok(())
 }
 
@@ -67,7 +74,7 @@ fn validate_name(name: &str) -> Result<(), String> {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 struct UserRegistration {
-    user_id:String,
+    user_id: String,
     name: String,
     date_of_birth: String,
     national_id: String,
@@ -76,6 +83,8 @@ struct UserRegistration {
 }
 
 pub fn interactively_register_voter() -> Result<(), Box<dyn Error>> {
+    info!("Starting voter registration process...");
+
     println!("Registering a new voter...");
 
     let mut national_id = String::new();
@@ -99,7 +108,7 @@ pub fn interactively_register_voter() -> Result<(), Box<dyn Error>> {
         name.clear(); // Clear previous input
         io::stdin().read_line(&mut name)?;
         name = name.trim().to_string();
-    
+
         if validate_name(&name).is_ok() {
             break; // Exit loop if valid
         } else {
@@ -121,17 +130,23 @@ pub fn interactively_register_voter() -> Result<(), Box<dyn Error>> {
         }
     }
 
+    info!("User input validated successfully.");
+
     // Read users.csv and try to find the user by national_id
     let mut rdr = ReaderBuilder::new()
-    .trim(Trim::All) // Trim leading and trailing whitespace from all fields
-    .from_path("users.csv")?;
-  
+        .trim(Trim::All) // Trim leading and trailing whitespace from all fields
+        .from_path("users.csv")?;
+
     let mut user_confirmed = false;
     let mut found_user: Option<UserRegistration> = None;
     for result in rdr.deserialize::<UserRegistration>() {
         let record: UserRegistration = result?;
-        if record.national_id == national_id && record.name == name && record.date_of_birth == date_of_birth {
+        if record.national_id == national_id
+            && record.name == name
+            && record.date_of_birth == date_of_birth
+        {
             if record.has_registered || record.has_voted {
+                error!("User {} has already registered or voted.", name);
                 return Err("User has already registered or voted.".into());
             }
             found_user = Some(record);
@@ -141,39 +156,47 @@ pub fn interactively_register_voter() -> Result<(), Box<dyn Error>> {
     }
     let mut user = match found_user {
         Some(user) => user,
-        None => return Err("User not found.".into()),
+        None => {
+            error!("User not found.");
+            return Err("User not found.".into());
+        }
     };
-    
+
     if user_confirmed {
-      println!("Details confirmed. Proceeding with registration...");
-      // Proceed to update the user as registered
+        info!("User details confirmed. Proceeding with registration...");
+        // Proceed to update the user as registered
         user.has_registered = true;
         update_user_registration(&user)?;
-      println!("Voter successfully registered.");
+        info!("Voter successfully registered.");
     } else {
-      println!("The details do not match our records.");
-      return Err("User details incorrect.".into());
+        error!("The details do not match our records.");
+        return Err("User details incorrect.".into());
     }
-      
-  
-    let voter = Voter::new(user.user_id,national_id, user.name, date_of_birth);
+
+    let voter = Voter::new(user.user_id, national_id, user.name, date_of_birth);
     register_voter(voter)?;
-  
+
     Ok(())
 }
 
 fn update_user_registration(updated_user: &UserRegistration) -> Result<(), Box<dyn Error>> {
     let mut rdr = ReaderBuilder::new()
-    .trim(Trim::All) // Trim leading and trailing whitespace from all fields
-    .from_path("users.csv")?;
+        .trim(Trim::All) // Trim leading and trailing whitespace from all fields
+        .from_path("users.csv")?;
     let mut records: Vec<UserRegistration> = rdr.deserialize().map(|r| r.unwrap()).collect();
 
     // Find the record to update
-    let pos = records.iter().position(|r| r.national_id == updated_user.national_id).unwrap();
+    let pos = records
+        .iter()
+        .position(|r| r.national_id == updated_user.national_id)
+        .unwrap();
     records[pos] = updated_user.clone();
 
     // Write all records back to the file, including the updated one
-    let file = OpenOptions::new().write(true).truncate(true).open("users.csv")?;
+    let file = OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .open("users.csv")?;
     let mut wtr = Writer::from_writer(file);
     for record in records {
         wtr.serialize(&record)?;
