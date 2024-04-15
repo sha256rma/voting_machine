@@ -77,7 +77,7 @@ struct Office {
     office_id: String,
     office_name: String,
 }
-  fn display_candidates(election_id: String, _election_name: String, user_id:String) -> Result<(), Box<dyn std::error::Error>> {
+fn display_candidates(election_id: String, _election_name: String, user_id: String) -> Result<(), Box<dyn Error>> {
     let mut rdr = csv::ReaderBuilder::new().has_headers(true).from_path("candidates.csv")?;
     let mut candidates: Vec<Candidate> = Vec::new();
 
@@ -98,29 +98,43 @@ struct Office {
     for result in rdr.deserialize() {
         let office: Office = result?;
         if office_ids.contains(&office.office_id) {
-            offices.insert(office.office_id, office.office_name);
+            offices.insert(office.office_id.clone(), office.office_name);
         }
     }
-    println!("Please choose a candidate by entering the number next to their name:");
-    for (index, candidate) in candidates.iter().enumerate() {
-        let office_name = offices
-            .get(&candidate.office_id)
-            .map_or("Unknown Office", String::as_str); // Transform Option<&String> to &str
-        println!("{}: {}, {}, {}", index + 1, candidate.name, candidate.political_party, office_name);
+
+    // Group candidates by their office
+    let mut candidates_by_office: HashMap<String, Vec<Candidate>> = HashMap::new();
+    for candidate in candidates {
+        candidates_by_office.entry(candidate.office_id.clone())
+            .or_insert_with(Vec::new)
+            .push(candidate);
     }
 
-    let mut selection = String::new();
-    io::stdin().read_line(&mut selection)?;
-    let selection: usize = selection.trim().parse().map_err(|_| "Invalid input. Please enter a valid number.")?;
+    // Iterate through each office and prompt the user to make a selection
+  for (office_id, office_candidates) in candidates_by_office {
+  let unknown_office = "Unknown Office".to_string();
+  let office_name = offices.get(&office_id).unwrap_or(&unknown_office);
 
+  println!("For the office of '{}', please choose a candidate by entering the number next to their name:", office_name);
 
-    if selection == 0 || selection > candidates.len() {
-        return Err("Selection out of bounds. Please choose a valid candidate number.".into());
+  for (index, candidate) in office_candidates.iter().enumerate() {
+      println!("{}: {}, {}", index + 1, candidate.name, candidate.political_party);
+  }
+
+        let mut selection = String::new();
+        io::stdin().read_line(&mut selection)?;
+        let selection: usize = selection.trim().parse().map_err(|_| "Invalid input. Please enter a valid number.")?;
+
+        if selection == 0 || selection > office_candidates.len() {
+            return Err("Selection out of bounds. Please choose a valid candidate number.".into());
+        }
+
+        let selected_candidate = &office_candidates[selection - 1];
+
+        // Here you would call your function to record the vote
+        cast_vote(election_id.clone(), user_id.clone(), selected_candidate.candidate_id.clone())?;
     }
 
-    let selected_candidate = &candidates[selection - 1];
-
-    cast_vote(election_id, user_id, selected_candidate.candidate_id.clone())?;
     Ok(())
 }
 
