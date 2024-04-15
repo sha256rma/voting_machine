@@ -2,20 +2,20 @@ extern crate csv;
 extern crate env_logger;
 
 mod authenticate_admin;
+mod cast_vote;
 mod close_election;
 mod create_ballot;
 mod models;
 mod open_election;
 mod save_ballot;
 mod signup_user;
-mod voter_registration;
-mod cast_vote;
 mod tally_votes;
+mod voter_registration;
 
 use crate::authenticate_admin::authenticate;
+use crate::cast_vote::authenticate_voter;
 use crate::create_ballot::public_interface_to_create_ballot;
 use crate::signup_user::signup_user;
-use crate::cast_vote::authenticate_voter;
 use crate::tally_votes::tally_vote;
 use close_election::close_election;
 use open_election::open_election;
@@ -40,13 +40,13 @@ fn main() {
             println!("0. Authenticate");
         } else {
             println!("1. Create Election Ballot");
-            println!("2. Sign Up a New User");
             println!("3. Register a New Voter");
             println!("4. Open Election for Voting");
             println!("5. Close Election to Prevent Further Votes");
-            println!("6. Cast Vote");
             println!("7. Tally Votes");
         }
+        println!("2. New user signup");
+        println!("6. Cast Vote");
         println!("8. Exit");
         println!("Enter your choice:");
 
@@ -81,20 +81,14 @@ fn main() {
                 }
             }
             "2" => {
-                if authenticated {
-                    if let Err(err) = signup_user() {
-                        eprintln!("Error signing up a user: {}", err);
-                        //process::exit(1);
-                    }
-                } else {
-                    println!("Authenticated access required!");
+                if let Err(err) = signup_user() {
+                    eprintln!("Error signing up a user: {}", err);
                 }
             }
             "3" => {
                 if authenticated {
                     if let Err(err) = interactively_register_voter() {
                         eprintln!("Error registering voter: {}", err);
-                        //process::exit(1);
                     }
                 } else {
                     println!("Authenticated access required!");
@@ -129,12 +123,8 @@ fn main() {
                 }
             }
             "6" => {
-                if authenticated {
-                    if let Err(err) = authenticate_voter() {
-                        eprintln!("Error Casting Vote: {}", err);
-                    }
-                } else {
-                    println!("Authenticated access required!");
+                if let Err(err) = authenticate_voter() {
+                    eprintln!("Error Casting Vote: {}", err);
                 }
             }
             "7" => {

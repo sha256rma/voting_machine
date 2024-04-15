@@ -40,7 +40,7 @@ pub fn close_election(election_id: &str) -> Result<(), Box<dyn Error>> {
     }
 
     let mut writer = csv::Writer::from_path("elections.csv")?;
-    writer.write_record(&["Election_ID", "Election_Name", "Is_Open"])?;
+    writer.write_record(&["election_id", "name", "is_open"])?;
 
     for election in &updated_elections {
         // Log each updated election with timestamp
