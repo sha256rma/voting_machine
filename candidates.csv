@@ -1,6 +1,9 @@
-Candidate_ID,Candidate_Name,Office_ID,Political_Party
-345099dc-9f42-4e6a-a664-b0d7c6eeecb4,Modi,acae8905-e9f8-494a-a57b-2f218ba416d6,BJP
-fe24f4dd-a4a1-4bf4-8808-6ae7bf81e7c7,Adam,acae8905-e9f8-494a-a57b-2f218ba416d6,Party 1
-b5df2be1-60e3-40ab-bc23-251ab53dd7bd,Bob,acae8905-e9f8-494a-a57b-2f218ba416d6,Party 2
-ddf2a82c-304a-40db-971a-9f9261e48ac7,Zuma,40addfe2-5f19-4553-ab55-2fc29ad948f4,Democrat
-ea775a77-3837-486f-bb10-3a548751f591,Yolo,c9521037-597b-4845-824b-6821c65fdaf0,people's party
+candidate_id,name,office_id,political_party,election_id
+ee8960a9-078d-49fb-b391-50a7e34beb34,James Anderson,4f9e30cb-7e0b-4f17-bdc6-619bc1661378,Conservative Party,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c
+0cd4c597-e475-4648-b771-5074dfbbe9b7,Samantha Evans,4f9e30cb-7e0b-4f17-bdc6-619bc1661378,Liberal Party,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c
+e60bab89-1ae4-4464-945d-7e4ffd9f7720,Daniel Brown,4f9e30cb-7e0b-4f17-bdc6-619bc1661378,Green Party,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c
+23c86427-a5a4-4d51-8798-e7cc3c117071,Robert Wilson,638240bf-242f-4222-8333-5101bac23499,Labour Party,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c
+af4598b5-675b-4019-a8ac-918b8d9740b1,Olivia Martinez,638240bf-242f-4222-8333-5101bac23499,National Party,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c
+34bd8a49-262b-4024-a3cd-bbb31f32f9c1,Chloe Harris,638240bf-242f-4222-8333-5101bac23499,Independent,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c
+791303d8-ae90-409c-933e-0e2c07fec004,Ethan Thompson,962f0f69-1c72-47d4-b692-4066f0afa26f,Democratic Party,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c
+580ea47a-2b02-478f-baa4-ad9cbfcbcb69,Sophia Clark,962f0f69-1c72-47d4-b692-4066f0afa26f,Socialist Party,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c

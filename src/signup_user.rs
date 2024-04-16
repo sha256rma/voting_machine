@@ -82,7 +82,10 @@ fn save_user(user: &User) -> Result<(), Box<dyn Error>> {
     ])?;
 
     wtr.flush()?;
-    info!("User '{}' has been created successfully.", user.name);
+    info!(
+        "User '{}' has been created successfully: {}, {}.",
+        user.name, user.date_of_birth, user.national_id
+    );
     Ok(())
 }
 

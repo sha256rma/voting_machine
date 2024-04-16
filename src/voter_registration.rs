@@ -41,7 +41,11 @@ pub fn register_voter(voter: Voter) -> Result<(), Box<dyn Error>> {
     ])?;
 
     wtr.flush()?;
-    info!("Voter {} successfully registered.", voter.clone().name);
+    info!(
+        "Voter {} ({}) successfully registered.",
+        voter.clone().name,
+        voter.national_id.clone()
+    );
     Ok(())
 }
 

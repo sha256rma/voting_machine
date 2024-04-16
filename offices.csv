@@ -1,4 +1,4 @@
-Office_ID,Office_Name,Election_ID,Election_Name
-acae8905-e9f8-494a-a57b-2f218ba416d6,PM,d705c6cb-b699-48e2-b6e2-cd1bcce1896c,Election 1
-40addfe2-5f19-4553-ab55-2fc29ad948f4,President,d705c6cb-b699-48e2-b6e2-cd1bcce1896c,Election 1
-c9521037-597b-4845-824b-6821c65fdaf0,Judge,d705c6cb-b699-48e2-b6e2-cd1bcce1896c,Election 1
+office_id,office_name,election_id,election_name
+4f9e30cb-7e0b-4f17-bdc6-619bc1661378,Prime Minister,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c,National Parliament Elections
+638240bf-242f-4222-8333-5101bac23499,Member of Parliament,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c,National Parliament Elections
+962f0f69-1c72-47d4-b692-4066f0afa26f,Minister of Finance,c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c,National Parliament Elections

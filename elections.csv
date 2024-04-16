@@ -1,2 +1,2 @@
-Election_ID,Election_Name,Is_Open
-d705c6cb-b699-48e2-b6e2-cd1bcce1896c,Election 1,false
+election_id,name,is_open
+c67a58a2-f21f-4ac0-bbdd-ca9b82aa299c,National Parliament Elections,false

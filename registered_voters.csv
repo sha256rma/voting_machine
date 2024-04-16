@@ -1,2 +1,10 @@
 user_id,national_id,name,date_of_birth,has_voted
-e15b1f15-ffce-4dff-88e9-bcfad6008c55,123-456-789,Jack,06-14-1999,false
+3d4dd296-1fb0-4a12-9e29-e0fe3a7bcade,654-987-321,Sarah,11-29-1976,true
+bdaa8e09-1f3d-45a3-89e8-10fd742cbded,456-789-123,Michael,09-15-1990,true
+bce960b9-a87d-4fda-acd6-e47e4b4c6135,987-654-321,Jennifer,03-22-1983,true
+0b5723ad-fb4b-4835-a203-a848b684eee2,123-456-789,Christopher,12-05-1978,true
+ab7ee352-580f-4a53-ad29-daf9c35ac922,345-678-901,Sarah Wilson,07-12-1976,false
+487f7943-f046-48d0-991f-57409fd6bd72,987-654-321,Michael Davis,03-08-1983,false
+9ac9b4b3-c67d-421d-a2fa-f00f1fe7ee03,876-543-210,Jane Smith,05-10-1985,false
+cab0ddb3-a3be-4bff-9617-0653929a2436,234-567-890,John Doe,01-01-1990,false
+9eaae11c-7e5c-49b7-be23-a680cf6bfdde,789-123-456,John,07-18-1992,false

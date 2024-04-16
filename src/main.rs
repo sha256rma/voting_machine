@@ -1,5 +1,4 @@
 extern crate csv;
-extern crate env_logger;
 
 mod authenticate_admin;
 mod cast_vote;

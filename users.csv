@@ -1,2 +1,16 @@
 user_id,name,date_of_birth,national_id,has_registered,has_voted
-e15b1f15-ffce-4dff-88e9-bcfad6008c55,Jack,06-14-1999,123-456-789,true,false
+9eaae11c-7e5c-49b7-be23-a680cf6bfdde,John,07-18-1992,789-123-456,true,false
+f1b9837c-b551-4c39-aadc-6614edfed079,David,05-03-1985,321-654-987,false,false
+3d4dd296-1fb0-4a12-9e29-e0fe3a7bcade,Sarah,11-29-1976,654-987-321,true,true
+bdaa8e09-1f3d-45a3-89e8-10fd742cbded,Michael,09-15-1990,456-789-123,true,true
+487f7943-f046-48d0-991f-57409fd6bd72,Michael Davis,03-08-1983,987-654-321,true,false
+0b5723ad-fb4b-4835-a203-a848b684eee2,Christopher,12-05-1978,123-456-789,true,true
+2ad86cbe-4a26-4081-bd39-8b7bcc54026f,Emily,09-15-1985,123-456-788,false,false
+2e2d6bcd-87b9-40d1-a8b8-eae62972b236,Benjamin,07-11-2000,789-012-345,false,false
+df4e8048-c045-48f9-b8b1-feea3df18990,Lola,03-19-1983,321-654-987,false,false
+cab0ddb3-a3be-4bff-9617-0653929a2436,John Doe,01-01-1990,234-567-890,true,false
+9ac9b4b3-c67d-421d-a2fa-f00f1fe7ee03,Jane Smith,05-10-1985,876-543-210,true,false
+be10839e-17a4-4f17-8c64-e13a7feea2cf,Alex Johnson,12-15-1978,678-901-234,false,false
+3f0882a0-c370-455d-8be7-371b3d420c01,Emily Brown,09-25-1992,123-456-781,false,false
+487f7943-f046-48d0-991f-57409fd6bd72,Michael Davis,03-08-1983,987-654-321,false,false
+ab7ee352-580f-4a53-ad29-daf9c35ac922,Sarah Wilson,07-12-1976,345-678-901,true,false

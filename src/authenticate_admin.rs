@@ -1,6 +1,7 @@
 use argon2::{password_hash::PasswordHash, password_hash::PasswordVerifier, Argon2};
 use chrono::Utc;
 use csv::Writer;
+use log::{debug, info};
 use serde_json;
 use std::error::Error;
 use std::fs::OpenOptions;
@@ -10,12 +11,13 @@ use std::vec::Vec;
 use uuid::Uuid;
 
 pub fn authenticate() -> Result<bool, Box<dyn Error>> {
-    // Command to run the Python script
     let output = Command::new("python3")
         .arg("assets/session_audit.py")
         .output()?;
 
     if output.status.success() {
+        info!("session audit execution successful.");
+
         // Parse the output JSON to extract the session ID
         let output_string = String::from_utf8_lossy(&output.stdout);
         let session_id = parse_session_id(&output_string);
@@ -24,10 +26,14 @@ pub fn authenticate() -> Result<bool, Box<dyn Error>> {
 
         // Get current timestamp
         let timestamp = Utc::now();
+        debug!("Current timestamp: {}", timestamp);
 
         // Write to CSV file
+        info!("Appending to audit trail...");
         if let Err(err) = append_to_audit_trail(&session_id, &timestamp) {
             eprintln!("Failed to append to audit trail: {}", err);
+        } else {
+            info!("Successfully appended to audit trail.");
         }
 
         let s_str = output_string.lines().last().ok_or("No output")?;
