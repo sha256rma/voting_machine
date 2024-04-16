@@ -28,7 +28,7 @@ fn main() {
     let mut authenticated = false;
 
     if let Some(_) = std::env::args().nth(1) {
-        if let Err(e) = log4rs::init_file("../log4rs.yml", Default::default()) {
+        if let Err(e) = log4rs::init_file("/home/seed/voting_machine", Default::default()) {
             eprintln!("{}", e);
         }
     }
